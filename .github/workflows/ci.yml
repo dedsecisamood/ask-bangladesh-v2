@@ -1,0 +1,138 @@
+name: Foundation checks
+
+on:
+  workflow_dispatch:
+    inputs:
+      model_benchmark:
+        description: Download pinned free CPU models and run the synthetic retrieval benchmark
+        required: false
+        default: false
+        type: boolean
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: foundation-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      ONNXRUNTIME_NODE_INSTALL: "skip"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Pin npm
+        run: npm install --global npm@11.19.1
+      - run: npm ci
+      - run: npm ls --all
+      - run: npm run format:check
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run test:coverage
+      - run: npm run phase8:review
+      - run: npm run test:database:guards
+      - run: npm run build
+      - name: Install Chromium and browser system dependencies
+        run: npm run test:e2e:install -- --with-deps
+      - run: npm run test:e2e
+      - run: npm run test:phase7:ui
+      - name: Upload test failure evidence
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: web-test-failure-evidence
+          path: |
+            test-results/
+            playwright-report/
+            coverage/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  database:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      SUPABASE_TELEMETRY_DISABLED: "1"
+      DO_NOT_TRACK: "1"
+      ONNXRUNTIME_NODE_INSTALL: "skip"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Pin npm
+        run: npm install --global npm@11.19.1
+      - run: npm ci
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.14.4"
+      - name: Install isolated Python worker client for real adapter verification
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install --requirement workers/ingestion/requirements-dev.txt
+          .venv/bin/python -m pip check
+      - run: npm run db:start
+      - run: npm run parser:build
+      - run: npm run test:parser
+      - run: npm run test:database
+      - name: Prepare pinned free CPU models (manual opt-in only)
+        if: github.event_name == 'workflow_dispatch' && inputs.model_benchmark
+        run: npm run embedding:download
+      - name: Actual offline CPU and PostgreSQL benchmark
+        if: github.event_name == 'workflow_dispatch' && inputs.model_benchmark
+        run: npm run test:retrieval:models
+      - run: npm run db:types
+      - run: npm run typecheck:database
+      - run: npm run build
+      - name: Install Chromium for published-directory integration
+        run: npm run test:e2e:install -- --with-deps
+      - name: Real local identity and API integration
+        id: integration
+        run: npm run test:integration
+      - name: Stop local Auth
+        if: always() && steps.integration.outcome != 'skipped'
+        run: npm run auth:stop
+      - name: Stop only the local project
+        if: always()
+        run: npm run db:stop
+
+  python:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PIP_DISABLE_PIP_VERSION_CHECK: "1"
+      PIP_CACHE_DIR: ${{ github.workspace }}/.cache/pip
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.14.4"
+      - name: Create isolated Python environment
+        run: python -m venv .venv
+      - name: Install pinned Python test dependencies
+        run: .venv/bin/python -m pip install --requirement workers/ingestion/requirements-dev.txt
+      - run: .venv/bin/python -m pip check
+      - name: Run Python foundation tests
+        run: .venv/bin/python -m pytest -c workers/ingestion/pyproject.toml --basetemp=.cache/pytest-tmp
+      - name: Validate planning documents
+        run: .venv/bin/python -B scripts/validate_docs.py

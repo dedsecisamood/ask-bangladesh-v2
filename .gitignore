@@ -1,0 +1,42 @@
+# JavaScript dependencies and framework output
+node_modules/
+.next/
+next-env.d.ts
+out/
+dist/
+*.tsbuildinfo
+database/supabase/.temp/
+database/supabase/.branches/
+
+# Local environment files; examples remain reviewable
+.env
+.env.*
+!.env.example
+
+# Tool caches, logs, reports and local artifacts
+.cache/
+.artifacts/
+*.log
+coverage/
+playwright-report/
+test-results/
+.vitest/
+.vercel/
+.turbo/
+.DS_Store
+Thumbs.db
+
+# Future Python development environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# Temporary/editor recovery files
+*.tmp
+*.swp
+*~

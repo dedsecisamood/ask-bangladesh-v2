@@ -1,0 +1,94 @@
+{
+  "name": "ask-bangladesh",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "npm@11.19.1",
+  "engines": {
+    "node": ">=24.22.0 <25",
+    "npm": ">=11.19.1 <12"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace @ask-bangladesh/web",
+    "build": "npm run build --workspace @ask-bangladesh/web",
+    "start": "npm run start --workspace @ask-bangladesh/web",
+    "typecheck": "npm run typecheck --workspace @ask-bangladesh/web && npm run typecheck:database",
+    "typecheck:database": "tsc --strict --noEmit --skipLibCheck --target es2022 --module nodenext --moduleResolution nodenext database/generated.types.ts",
+    "lint": "eslint . --max-warnings=0",
+    "format": "prettier --write \"*.{json,mjs,ts}\" \".prettierrc.json\" \".github/workflows/*.{yml,yaml}\" \"apps/web/*.{json,ts,mjs}\" \"apps/web/src/**/*.{ts,tsx,css}\" \"scripts/*.mjs\" \"tests/**/*.{ts,json}\" \"database/**/*.{mjs,ts}\" \"packages/**/*.{json,mjs,ts}\"",
+    "format:check": "prettier --check \"*.{json,mjs,ts}\" \".prettierrc.json\" \".github/workflows/*.{yml,yaml}\" \"apps/web/*.{json,ts,mjs}\" \"apps/web/src/**/*.{ts,tsx,css}\" \"scripts/*.mjs\" \"tests/**/*.{ts,json}\" \"database/**/*.{mjs,ts}\" \"packages/**/*.{json,mjs,ts}\"",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "node scripts/playwright.mjs test",
+    "test:e2e:install": "node scripts/playwright.mjs install chromium",
+    "test:python": "node scripts/python.mjs",
+    "parser:build": "node scripts/parser.mjs build",
+    "test:parser": "node scripts/parser.mjs test",
+    "db:start": "node scripts/database.mjs start",
+    "db:stop": "node scripts/database.mjs stop",
+    "db:status": "node scripts/database.mjs status",
+    "db:migrate": "node scripts/database.mjs migrate",
+    "db:types": "node scripts/database.mjs types",
+    "auth:start": "node scripts/auth-local.mjs start",
+    "auth:stop": "node scripts/auth-local.mjs stop",
+    "auth:dev": "node scripts/auth-local.mjs dev",
+    "test:integration": "node scripts/phase3-integration.mjs",
+    "validate:phase3": "npm run validate && npm run test:database:guards && npm run test:database && npm run test:integration",
+    "validate:p18": "npm run validate:phase3",
+    "validate:phase4": "npm run validate:phase3",
+    "validate:phase5": "npm run validate:phase3 && npm run test:parser",
+    "test:database:guards": "node --test scripts/database.test.mjs",
+    "test:database": "node scripts/database.mjs test",
+    "test:retrieval": "node --test --test-name-pattern=\"P29|P30|P31|P32|P33|P34\" database/tests/core.test.mjs",
+    "validate:p14": "npm run validate && npm run test:database:guards && npm run test:database",
+    "validate:p15": "npm run validate:p14",
+    "docs:check": "node scripts/python.mjs -B scripts/validate_docs.py",
+    "validate": "npm ls --all && npm run format:check && npm run lint && npm run typecheck && npm run test:coverage && node scripts/python.mjs -m pip check && npm run test:python && npm run docs:check && npm run build && npm run test:e2e",
+    "embedding:download": "node scripts/embedding-models.mjs download",
+    "embedding:verify": "node scripts/embedding-models.mjs verify",
+    "test:retrieval:models": "vitest run --config vitest.phase6.config.ts",
+    "validate:phase6": "npm run validate:phase3 && npm run test:parser && npm run embedding:verify && npm run test:retrieval:models",
+    "test:phase7": "vitest run apps/web/src/lib/answers apps/web/src/lib/questions apps/web/src/features/chat/grounded-answer.test.tsx",
+    "test:phase7:ui": "node scripts/playwright.mjs test --config playwright.phase7.config.ts",
+    "phase7:review": "node scripts/phase7-review.mjs",
+    "validate:phase7": "npm run validate:phase6 && npm run test:phase7:ui",
+    "test:phase8": "vitest run apps/web/src/lib/questions/language.test.ts apps/web/src/lib/questions/phase8.evaluation.test.ts",
+    "phase8:review": "node scripts/phase8-review.mjs",
+    "validate:phase8": "npm run validate:phase7 && npm run phase8:review"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.64.1",
+    "@testing-library/dom": "10.4.2",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
+    "@types/pg": "8.23.1",
+    "@vitejs/plugin-react": "6.1.2",
+    "@vitest/coverage-v8": "5.0.5",
+    "eslint": "10.13.0",
+    "eslint-config-next": "16.4.2",
+    "eslint-config-prettier": "10.1.8",
+    "jsdom": "30.1.3",
+    "prettier": "3.9.10",
+    "supabase": "2.121.0",
+    "vitest": "5.0.5"
+  },
+  "overrides": {
+    "eslint-config-next@16.4.2": {
+      "eslint-plugin-import@2.32.0": {
+        "eslint": "$eslint"
+      },
+      "eslint-plugin-react@7.37.5": {
+        "eslint": "$eslint"
+      },
+      "eslint-plugin-jsx-a11y@6.10.2": {
+        "eslint": "$eslint"
+      }
+    }
+  },
+  "type": "module"
+}

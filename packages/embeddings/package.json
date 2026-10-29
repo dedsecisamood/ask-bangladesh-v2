@@ -1,0 +1,10 @@
+{
+  "name": "@ask-bangladesh/embeddings",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Offline CPU embedding process; never imported by browser code",
+  "dependencies": {
+    "@huggingface/transformers": "4.3.1"
+  }
+}

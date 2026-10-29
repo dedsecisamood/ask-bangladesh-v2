@@ -1,0 +1,8 @@
+[tool.pytest.ini_options]
+minversion = "9.1"
+testpaths = ["tests"]
+pythonpath = ["."]
+python_files = ["test_*.py"]
+addopts = ["--strict-config", "--strict-markers", "--import-mode=importlib", "-ra"]
+cache_dir = "../../.cache/pytest"
+filterwarnings = ["error"]

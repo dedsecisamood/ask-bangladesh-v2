@@ -1,0 +1,80 @@
+{
+  "e5": {
+    "profileId": "30000000-0000-4000-8000-000000000001",
+    "repo": "Xenova/multilingual-e5-small",
+    "revision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+    "upstream": "intfloat/multilingual-e5-small",
+    "license": "mit",
+    "dimensions": 384,
+    "maxTokens": 512,
+    "pooling": "mean",
+    "normalization": "l2_unit",
+    "queryPrefix": "query: ",
+    "passagePrefix": "passage: ",
+    "files": [
+      {
+        "path": "config.json",
+        "bytes": 658,
+        "sha256": null,
+        "gitBlob": "4104f38273cc595fd9500fd243124e9f6cf383dc"
+      },
+      {
+        "path": "tokenizer.json",
+        "bytes": 17082730,
+        "sha256": "0b44a9d7b51c3c62626640cda0e2c2f70fdacdc25bbbd68038369d14ebdf4c39",
+        "gitBlob": "c9b2fea3119ca8886380e5f47bffc5ea7a6e0ffa"
+      },
+      {
+        "path": "tokenizer_config.json",
+        "bytes": 443,
+        "sha256": null,
+        "gitBlob": "059214673d9d6d2ee319411e2ffec8c024b816d5"
+      },
+      {
+        "path": "onnx/model_quantized.onnx",
+        "bytes": 118308185,
+        "sha256": "f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193",
+        "gitBlob": "313b94a513ded056e6b6f13f156cbbe1b1205391"
+      }
+    ]
+  },
+  "minilm": {
+    "profileId": "30000000-0000-4000-8000-000000000002",
+    "repo": "Xenova/paraphrase-multilingual-MiniLM-L12-v2",
+    "revision": "2c4055b12046f11709e9df2c122e59ffbdc2f900",
+    "upstream": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "license": "apache-2.0",
+    "dimensions": 384,
+    "maxTokens": 128,
+    "pooling": "mean",
+    "normalization": "l2_unit",
+    "queryPrefix": "",
+    "passagePrefix": "",
+    "files": [
+      {
+        "path": "config.json",
+        "bytes": 673,
+        "sha256": null,
+        "gitBlob": "ce7fe159b2eee53ef2b9704a72a4efa6c22248b4"
+      },
+      {
+        "path": "tokenizer.json",
+        "bytes": 17082913,
+        "sha256": "b60b6b43406a48bf3638526314f3d232d97058bc93472ff2de930d43686fa441",
+        "gitBlob": "b0b95de7efad14cb45a9f69cf3c5572b1516f1bc"
+      },
+      {
+        "path": "tokenizer_config.json",
+        "bytes": 496,
+        "sha256": null,
+        "gitBlob": "9f3bfd538ec86d360dc988dac25e3cfb0c4c14d5"
+      },
+      {
+        "path": "onnx/model_quantized.onnx",
+        "bytes": 118308126,
+        "sha256": "66fc00f5f29afcaff34092e1bdd20008ca3918265a82fb9695a551e510cc4ebc",
+        "gitBlob": "58ea82e9bc2170ed6e89b7f859684483992ce876"
+      }
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+node_modules/
+**/.next/
+**/next-env.d.ts
+.cache/
+.venv/
+coverage/
+playwright-report/
+test-results/
+**/*.tsbuildinfo
+# Preserve the existing planning documents and owner-provided context.
+**/*.md
+masterprompt.txt
+package-lock.json
+*.py
+*.toml
+*.txt

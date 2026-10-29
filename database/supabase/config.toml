@@ -1,0 +1,50 @@
+# Local only. No remote project is linked. Start through npm run db:start.
+project_id = "askbd-local"
+[api]
+enabled = false
+port = 54321
+schemas = ["public"]
+extra_search_path = ["public"]
+max_rows = 50
+auto_expose_new_tables = false
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 17
+health_timeout = "2m"
+[db.migrations]
+enabled = true
+schema_paths = []
+[db.seed]
+enabled = false
+sql_paths = []
+[db.pooler]
+enabled = false
+port = 54329
+pool_mode = "transaction"
+default_pool_size = 5
+max_client_conn = 20
+[auth]
+enabled = false
+site_url = "http://127.0.0.1:3000"
+enable_signup = false
+enable_anonymous_sign_ins = false
+[realtime]
+enabled = false
+[studio]
+enabled = false
+port = 54323
+api_url = "http://127.0.0.1"
+[local_smtp]
+enabled = false
+port = 54324
+[storage]
+enabled = false
+[storage.s3_protocol]
+enabled = false
+[storage.vector]
+enabled = false
+[analytics]
+enabled = false
+[edge_runtime]
+enabled = false
